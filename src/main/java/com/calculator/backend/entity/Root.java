@@ -12,8 +12,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.util.UUID;
 
 @Data
@@ -21,13 +23,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "roots")
+@Table(name = "roots", uniqueConstraints =
+    @UniqueConstraint(name = "U", columnNames = {"value", "equation_id"}))
 public class Root {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "root_id")
     private UUID id;
-    private Double root;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Column(name = "value")
+    private Double value;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "equation_id")
     private Equation equation;
 }

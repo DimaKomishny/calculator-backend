@@ -10,6 +10,11 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
 @Service
 public class EquationValidatorExp4j implements EquationValidator {
 
@@ -18,13 +23,15 @@ public class EquationValidatorExp4j implements EquationValidator {
 
     @Override
     public void validate(Equation equation) {
-        var bodyEqual = parseExpressionEqual(equation.getBody());
+        var bodyEqual = parseExpressionEqual(equation.getBody().toLowerCase(Locale.ROOT));
         var expression = new ExpressionBuilder(bodyEqual.getValue1())
                 .variables(NAME_OF_VARIABLE)
-                .build();
+                .build()
+                .setVariable(NAME_OF_VARIABLE, 1);
         validateExpression(expression);
+        validateRootDuplicates(equation.getRoots());
         equation.getRoots().stream()
-                .map(Root::getRoot)
+                .map(Root::getValue)
                 .forEach(rootValue -> validateRoots(expression, rootValue, bodyEqual.getValue2()));
     }
 
@@ -33,6 +40,16 @@ public class EquationValidatorExp4j implements EquationValidator {
         if (res != equal) {
             throw new EquationException(String.format("root %f is not correct", root));
         }
+    }
+
+    private void validateRootDuplicates(List<Root> root) {
+        Set<Double> items = new HashSet<>();
+        root.stream()
+                .map(Root::getValue)
+                .filter(r -> !items.add(r))
+                .findAny().ifPresent(r -> {
+                    throw new EquationException(String.format("Roots should be unique. Root %f is duplicate", r));
+                });
     }
 
     private Pair<String, Double> parseExpressionEqual(String body) {
@@ -45,10 +62,13 @@ public class EquationValidatorExp4j implements EquationValidator {
     }
 
     private void checkExistingVariableAndEqualSign(String body) {
-        if (body.contains(EQUAL) ) {
+        if (body == null) {
+            throw new EquationException("Equal expression is empty");
+        }
+        if (!body.contains(EQUAL) ) {
             throw new EquationException("Equal does not exist");
         }
-        if(body.contains(NAME_OF_VARIABLE)) {
+        if(!body.contains(NAME_OF_VARIABLE)) {
             throw new EquationException("Variable does not exist");
         }
     }

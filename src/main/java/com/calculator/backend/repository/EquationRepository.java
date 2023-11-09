@@ -11,6 +11,6 @@ import java.util.UUID;
 public interface EquationRepository extends JpaRepository<Equation, UUID> {
     @Query(value =
             "select e from Equation e " +
-            "join fetch e.roots r where r.root = :root")
+            "join fetch e.roots r where r.value = :root")
     List<Equation> findByRoot(@Param("root") double root);
 }

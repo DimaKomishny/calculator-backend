@@ -6,7 +6,9 @@ import com.calculator.backend.services.EquationValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -15,7 +17,7 @@ public class EquationService {
     private EquationRepository equationRepo;
     private EquationValidator equationValidator;
 
-    public List<Equation> getAllEquations() {
+    public List<Equation> getAll() {
         return equationRepo.findAll();
     }
 
@@ -26,5 +28,10 @@ public class EquationService {
     public void save(Equation equation) {
         equationValidator.validate(equation);
         equationRepo.save(equation);
+    }
+
+    public Equation getById(UUID id) {
+        return equationRepo.findById(id).orElseThrow(() ->
+                        new EntityNotFoundException(String.format("Equation with id %s does not exist", id)));
     }
 }
