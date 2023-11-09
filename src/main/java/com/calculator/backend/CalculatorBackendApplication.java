@@ -9,5 +9,4 @@ public class CalculatorBackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(CalculatorBackendApplication.class, args);
     }
-
 }
