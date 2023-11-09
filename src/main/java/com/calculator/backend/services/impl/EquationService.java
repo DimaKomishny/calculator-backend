@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,5 +34,13 @@ public class EquationService {
     public Equation getById(UUID id) {
         return equationRepo.findById(id).orElseThrow(() ->
                         new EntityNotFoundException(String.format("Equation with id %s does not exist", id)));
+    }
+
+    public void delete(UUID id) {
+        equationRepo.deleteById(id);
+    }
+
+    public List<Equation> getWithOneRoot() {
+        return equationRepo.findWithOneRoot();
     }
 }

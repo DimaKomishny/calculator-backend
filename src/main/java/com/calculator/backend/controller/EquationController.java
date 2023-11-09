@@ -8,6 +8,7 @@ import com.calculator.backend.services.impl.EquationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,16 @@ public class EquationController {
     @GetMapping("/root/{root}")
     public ResponseEntity<List<EquationDto>> getByRoot(@PathVariable("root") Double root) {
         return new ResponseEntity<>(equationFacade.getByRoot(root), HttpStatus.OK);
+    }
+
+    @GetMapping("/root")
+    public ResponseEntity<List<EquationDto>> getByRoot() {
+        return new ResponseEntity<>(equationFacade.getWithOneRoot(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") String id) {
+        equationFacade.delete(id);
     }
 
     @GetMapping("/{id}")

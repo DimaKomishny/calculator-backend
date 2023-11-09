@@ -33,4 +33,13 @@ public class EquationFacade {
         return equationService.getEquationByRoot(root).stream()
                 .map(equationDtoConvertor::convert).collect(Collectors.toList());
     }
+
+    public void delete(String id) {
+        equationService.delete(UUID.fromString(id));
+    }
+
+    public List<EquationDto> getWithOneRoot() {
+        return equationService.getWithOneRoot().stream()
+                .map(equationDtoConvertor::convert).collect(Collectors.toList());
+    }
 }

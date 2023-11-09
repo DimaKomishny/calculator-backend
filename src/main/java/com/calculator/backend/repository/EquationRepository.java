@@ -13,4 +13,11 @@ public interface EquationRepository extends JpaRepository<Equation, UUID> {
             "select e from Equation e " +
             "join fetch e.roots r where r.value = :root")
     List<Equation> findByRoot(@Param("root") double root);
+
+    @Query(value =
+            "select e from Equation e " +
+            "join e.roots r " +
+            "group by e.id " +
+            "having count(r.id) = 1")
+    List<Equation> findWithOneRoot();
 }
